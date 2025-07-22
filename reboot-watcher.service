@@ -1,0 +1,11 @@
+[Unit]
+Description=Watch for Flask reboot trigger
+
+[Service]
+ExecStart=/usr/local/bin/watch_reboot.sh
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target
