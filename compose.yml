@@ -26,6 +26,7 @@ services:
       - UPLOAD_FOLDER=${UPLOAD_FOLDER}
     volumes:
       - ${UPLOAD_FOLDER_HOST}:${UPLOAD_FOLDER}
+      - /tmp:/tmp
 
 volumes:
   caddy_data:
