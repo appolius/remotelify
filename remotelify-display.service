@@ -1,0 +1,11 @@
+[Unit]
+Description=Remotelify Content Display Loop
+After=network.target
+
+[Service]
+ExecStart=/home/YOUR_USERNAME/remotelify/display_content.sh
+Restart=always
+User=YOUR_USERNAME
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+[Unit]
+Description=Remotelify Flask Uploader
+After=network.target
+
+[Service]
+User=YOUR_USERNAME
+WorkingDirectory=/home/YOUR_USERNAME/remotelify
+ExecStart=/home/YOUR_USERNAME/remotelify/.venv/bin/python main.py
+EnvironmentFile=/home/YOUR_USERNAME/remotelify/.env
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
