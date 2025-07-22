@@ -1,5 +1,4 @@
 import os
-import subprocess
 from flask import request, redirect, url_for, render_template, send_from_directory, flash
 from werkzeug.utils import secure_filename
 
@@ -15,13 +14,12 @@ def register_routes(app):
     @app.route('/restart', methods=['POST'])
     def restart_autoplay():
         try:
-            subprocess.run(['sudo', 'reboot'], check=True)
-            flash("Rebooting computer...")
-        except FileNotFoundError:
-            flash("Reboot command not found. This feature is unavailable in development mode.")
-        except subprocess.CalledProcessError:
-            flash("Failed to reboot computer.")
+            os.system('reboot')
+            flash("Rebooting...")
+        except Exception as e:
+            flash(f"Error: {e}")
         return redirect(url_for('index'))
+
     
     @app.route('/')
     def index():
@@ -57,10 +55,5 @@ def register_routes(app):
             flash(f"File {filename} not found")
         return redirect(url_for('index'))
     
-    @app.route('/restart-display', methods=['POST'])
-    def restart_display():
-        subprocess.run(['systemctl', '--user', 'restart', 'remotelify-display.service'])
-        flash("Display script restarted.")
-        return redirect(url_for('index'))
 
 
