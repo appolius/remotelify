@@ -15,12 +15,12 @@ def register_routes(app):
     @app.route('/restart', methods=['POST'])
     def restart_autoplay():
         try:
-            subprocess.run(['systemctl', '--user', 'restart', 'remotelify-display.service'], check=True)
-            flash("Autoplay service restarted.")
+            subprocess.run(['sudo', 'reboot'], check=True)
+            flash("Rebooting computer...")
         except FileNotFoundError:
-            flash("systemctl not found. This feature is unavailable.")
+            flash("Reboot command not found. This feature is unavailable in development mode.")
         except subprocess.CalledProcessError:
-            flash("Failed to restart autoplay service.")
+            flash("Failed to reboot computer.")
         return redirect(url_for('index'))
     
     @app.route('/')
