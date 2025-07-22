@@ -8,6 +8,18 @@
   </head>
   <body class="bg-gray-100 font-sans">
     <div class="max-w-3xl mx-auto py-12">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div id="flashMsg" class="mb-6">
+            {% for message in messages %}
+              <div class="flex items-center justify-between bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded relative mb-2" role="alert">
+                <span>{{ message }}</span>
+                <button onclick="this.parentElement.style.display='none'" class="ml-4 text-yellow-700 hover:text-yellow-900 font-bold text-lg">&times;</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
       <h1 class="text-3xl font-bold text-center mb-8">Remotelify Content Upload</h1>
 
       <form
@@ -35,24 +47,43 @@
         <button
   id="uploadBtn"
   type="submit"
-  class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+  class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center"
   disabled
 >
-  Upload
+  <svg id="uploadSpinner" class="hidden animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+  </svg>
+  <span id="uploadBtnText">Upload</span>
 </button>
 
       </form>
+
+      <div class="flex justify-end mb-4">
+        <form id="restartForm" action="/restart" method="POST">
+          <button type="submit" id="restartBtn" class="flex items-center bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            <svg id="restartSpinner" class="hidden animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <span id="restartBtnText">Restart Autoplay</span>
+          </button>
+        </form>
+      </div>
 
       <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 border border-gray-300">
         <h2 class="text-xl font-semibold mb-4">Uploaded Files</h2>
         <ul class="list-disc list-inside space-y-1">
           {% for file in files %}
-            <li class="flex items-center justify-between">
-  <a href="/files/{{ file }}" target="_blank" class="text-blue-600 hover:underline">
-    {{ file }}
-  </a>
+
+            <li class="flex items-center justify-between space-x-2">
+  <div class="flex-1 min-w-0">
+    <a href="/files/{{ file }}" target="_blank" class="text-blue-600 hover:underline block truncate max-w-xs sm:max-w-md md:max-w-lg">
+      {{ file }}
+    </a>
+  </div>
   <form method="POST" action="/delete/{{ file }}" onsubmit="return confirm('Delete {{ file }}?');">
-    <button type="submit" class="text-red-600 hover:underline text-sm ml-4">Delete</button>
+    <button type="submit" class="text-red-600 hover:underline text-sm ml-4 whitespace-nowrap">Delete</button>
   </form>
 </li>
 
@@ -69,6 +100,42 @@
     const uploadBtn = document.getElementById('uploadBtn');
     uploadBtn.disabled = !fileInput.value;
   }
+
+  // Show spinner and disable form on submit (upload)
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form[action="/upload"]');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadSpinner = document.getElementById('uploadSpinner');
+    const uploadBtnText = document.getElementById('uploadBtnText');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        uploadBtn.disabled = true;
+        if (uploadSpinner) uploadSpinner.classList.remove('hidden');
+        if (uploadBtnText) uploadBtnText.classList.add('opacity-50');
+      });
+    }
+
+    // Restart button spinner
+    const restartForm = document.getElementById('restartForm');
+    const restartBtn = document.getElementById('restartBtn');
+    const restartSpinner = document.getElementById('restartSpinner');
+    const restartBtnText = document.getElementById('restartBtnText');
+    if (restartForm) {
+      restartForm.addEventListener('submit', function (e) {
+        restartBtn.disabled = true;
+        if (restartSpinner) restartSpinner.classList.remove('hidden');
+        if (restartBtnText) restartBtnText.classList.add('opacity-50');
+      });
+    }
+
+    // Auto-hide flash message after 5 seconds
+    const flashMsg = document.getElementById('flashMsg');
+    if (flashMsg) {
+      setTimeout(function() {
+        flashMsg.style.display = 'none';
+      }, 5000);
+    }
+  });
 </script>
 
   </body>

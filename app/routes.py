@@ -12,6 +12,17 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def register_routes(app):
+    @app.route('/restart', methods=['POST'])
+    def restart_autoplay():
+        try:
+            subprocess.run(['systemctl', '--user', 'restart', 'remotelify-display.service'], check=True)
+            flash("Autoplay service restarted.")
+        except FileNotFoundError:
+            flash("systemctl not found. This feature is unavailable.")
+        except subprocess.CalledProcessError:
+            flash("Failed to restart autoplay service.")
+        return redirect(url_for('index'))
+    
     @app.route('/')
     def index():
         files = os.listdir(app.config['UPLOAD_FOLDER'])
