@@ -1,0 +1,32 @@
+services:
+  caddy:
+    image: caddy:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./conf:/etc/caddy
+      # - ./site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+
+  flask:
+    build:
+      context: .
+    container_name: flask-app
+    restart: unless-stopped
+    expose:
+      - "${FLASK_PORT}"
+    ports:
+      - "5050:5050"
+    environment:
+      - FLASK_PORT=${FLASK_PORT}
+      - UPLOAD_FOLDER=${UPLOAD_FOLDER}
+    volumes:
+      - ${UPLOAD_FOLDER_HOST}:${UPLOAD_FOLDER}
+
+volumes:
+  caddy_data:
+  caddy_config:
