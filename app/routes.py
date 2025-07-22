@@ -14,8 +14,9 @@ def register_routes(app):
     @app.route('/restart', methods=['POST'])
     def restart_autoplay():
         try:
-            os.system('reboot')
-            flash("Rebooting...")
+            with open('/tmp/trigger-reboot', 'w') as f:
+                f.write('reboot')
+            flash("Reboot triggered...")
         except Exception as e:
             flash(f"Error: {e}")
         return redirect(url_for('index'))
