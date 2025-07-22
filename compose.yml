@@ -17,6 +17,7 @@ services:
       context: .
     container_name: flask-app
     restart: unless-stopped
+    privileged: true
     expose:
       - "${FLASK_PORT}"
     ports:
