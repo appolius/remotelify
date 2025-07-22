@@ -6,6 +6,8 @@ After=graphical.target
 ExecStart=/home/ubuntu/remotelify/display_content.sh
 Restart=always
 User=ubuntu
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/ubuntu/.Xauthority
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
